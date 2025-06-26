@@ -34,18 +34,22 @@ else:
         print('Incorrect password...Exception:', e)
 
 
-# tweet and post
-tweet_button = WebDriverWait(complaint_bot_driver, 10).until(
-    expected_conditions.element_to_be_clickable((By.CSS_SELECTOR, 'a[aria-label="Post"]')))
-tweet_button.click()
+try:
+    # tweet and post
+    tweet_button = WebDriverWait(complaint_bot_driver, 10).until(
+        expected_conditions.element_to_be_clickable((By.CSS_SELECTOR, 'a[aria-label="Post"]')))
+    tweet_button.click()
 
-sleep(2)
-tweet = complaint_bot_driver.find_element(
-    By.CSS_SELECTOR, 'div[aria-label="Post text"] .public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
-tweet.click()
-tweet.send_keys('Slow internet @telecel')
+    sleep(2)
+    tweet = complaint_bot_driver.find_element(
+        By.CSS_SELECTOR, 'div[aria-label="Post text"] .public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
+    tweet.click()
+    tweet.send_keys('Slow internet @telecel')
 
-sleep(2)
-post_tweet = complaint_bot_driver.find_element(
-    By.CSS_SELECTOR, 'button[data-testid="tweetButton"]')
-post_tweet.click()
+    sleep(2)
+    post_tweet = complaint_bot_driver.find_element(
+        By.CSS_SELECTOR, 'button[data-testid="tweetButton"]')
+    post_tweet.click()
+
+except Exception as e:
+    print('Tweet/post failed:', e)
