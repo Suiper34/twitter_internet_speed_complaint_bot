@@ -11,14 +11,41 @@ from selenium.webdriver.support.ui import WebDriverWait
 options = ChromeOptions.add_experimental_option('detach', True)
 complaint_bot_driver = webdriver.Chrome(options=options)
 
-# internet speed tester
-complaint_bot_driver.get('https://www.speedtest.net/')
 
-# start test
-start_test = WebDriverWait(complaint_bot_driver, 30).until(
-    expected_conditions.element_to_be_clickable(
-        (By.CSS_SELECTOR, 'a[aria-label="start speed test - connection type multi"]')))
-start_test.click()
+try:
+    # internet speed tester
+    complaint_bot_driver.get('https://www.speedtest.net/')
+
+    # start test
+    start_test = WebDriverWait(complaint_bot_driver, 30).until(
+        expected_conditions.element_to_be_clickable(
+            (By.CSS_SELECTOR, 'a[aria-label="start speed test - connection type multi"]')))
+    start_test.click()
+
+    # download value in mbps
+    download_mbps = WebDriverWait(complaint_bot_driver, 200).until(
+        expected_conditions.presence_of_element_located(
+            (By.CSS_SELECTOR, 'span.result-data-value.download-speed'))
+    )
+    download_speed = download_mbps.text
+    if not download_speed:
+        raise ValueError('Download speed not found or empty.')
+
+    # upload value in mbps
+    upload_mbps = WebDriverWait(complaint_bot_driver, 5).until(
+        expected_conditions.presence_of_element_located(
+            (By.CSS_SELECTOR, 'span.result-data-value.upload-speed')
+        )
+    )
+    upload_speed = upload_mbps.text
+    if not upload_speed:
+        raise ValueError('Upload speed not found or empty.')
+
+except Exception as e:
+    print('Speed Test Failed:', e)
+    # None to prevents UnboundLocalError
+    download_speed = None
+    upload_speed = None
 
 
 sleep(10)
