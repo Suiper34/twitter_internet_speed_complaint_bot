@@ -14,6 +14,8 @@ complaint_bot_driver = webdriver.Chrome(options=options)
 
 full_day = 3600*24
 current_time = time()
+DOWN_MBPS = 25
+UP_MBPS = 10
 
 while True:
     if time() - current_time > full_day:
@@ -75,25 +77,27 @@ while True:
             except Exception as e:
                 print('Incorrect password...Exception:', e)
 
-        try:
-            # tweet and post
-            tweet_button = WebDriverWait(complaint_bot_driver, 10).until(
-                expected_conditions.element_to_be_clickable((By.CSS_SELECTOR, 'a[aria-label="Post"]')))
-            tweet_button.click()
+        if float(upload_speed) < UP_MBPS or float(download_speed) < DOWN_MBPS:
+            try:
+                # tweet and post
+                tweet_button = WebDriverWait(complaint_bot_driver, 10).until(
+                    expected_conditions.element_to_be_clickable((By.CSS_SELECTOR, 'a[aria-label="Post"]')))
+                tweet_button.click()
 
-            sleep(2)
-            tweet_area = complaint_bot_driver.find_element(
-                By.CSS_SELECTOR, 'div[aria-label="Post text"] .public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
-            tweet_area.click()
-            tweet_area.send_keys('Slow internet @telecel')
+                sleep(2)
+                tweet_area = complaint_bot_driver.find_element(
+                    By.CSS_SELECTOR, 'div[aria-label="Post text"] .public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
+                tweet_area.click()
+                tweet_area.send_keys(
+                    f'Slow internet, @telecel promised {UP_MBPS}mbps for upload and {DOWN_MBPS}mbps for dowloads \nBut I\'m only receiving {upload_speed}mbps Up and {download_speed}mbps Down!')
 
-            sleep(2)
-            post_tweet = complaint_bot_driver.find_element(
-                By.CSS_SELECTOR, 'button[data-testid="tweetButton"]')
-            post_tweet.click()
+                sleep(2)
+                post_tweet = complaint_bot_driver.find_element(
+                    By.CSS_SELECTOR, 'button[data-testid="tweetButton"]')
+                post_tweet.click()
 
-        except Exception as e:
-            print('Tweet/post failed:', e)
+            except Exception as e:
+                print('Tweet/post failed:', e)
 
         current_time = time()  # reset time
 
